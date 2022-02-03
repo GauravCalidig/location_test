@@ -53,7 +53,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  bool isLoading = false;
   TextEditingController addressController = TextEditingController();
 
   @override
@@ -93,8 +93,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: Text("Get Location"),
+        label: isLoading
+            ? CircularProgressIndicator(
+                color: Colors.white,
+              )
+            : Text("Get Location"),
         onPressed: () async {
+          setState(() {
+            isLoading = true;
+          });
           Position position = await determinePosition();
           log('position: $position');
           List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
@@ -123,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
               address = address + "${placemarks[0].country}";
             }
             addressController.text = address;
-
+            isLoading = false;
             setState(() {});
           }
         },
